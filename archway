@@ -1,0 +1,20 @@
+apt-get update && apt-get update -y
+cd; mkdir node; cd node
+git clone https://github.com/archway-network/archway
+cd archway
+git checkout main
+make install
+echo "Ener valik name"
+read valik
+archwayd init $valik --chain-id torii-1
+wget https://raw.githubusercontent.com/archway-network/testnets/main/torii-1/penultimate_genesis.json
+cp penultimate_genesis.json ~/.archway/config/genesis.json
+archwayd keys add usr
+archwayd add-genesis-account $(archwayd keys show usr -a)  1001000utorii --home $HOMEDIR
+archwayd gentx usr 1000000utorii \
+  --commission-rate 0.1 \
+  --commission-max-rate 0.1 \
+  --commission-max-change-rate 0.1 \
+  --pubkey $(archwayd tendermint show-validator) \
+  --chain-id torii-1
+  
