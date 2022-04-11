@@ -1,4 +1,20 @@
 apt-get update && apt-get update -y
+rm -rvf /usr/local/go/
+sudo apt-get remove golang-go -y
+sudo apt-get remove --auto-remove golang-go -y
+rm -rf "/usr/local/.go/"
+rm -rf "/usr/local/go/"
+rm -rvf /usr/local/go/
+wget https://golang.org/dl/go1.18.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz
+cat <<EOF >> ~/.profile
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export GO111MODULE=on
+export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+EOF
+source ~/.profile
+
 cd; mkdir node; cd node
 git clone https://github.com/archway-network/archway
 cd archway
@@ -6,10 +22,11 @@ git checkout main
 make install
 echo "Ener valik name"
 read valik
-archwayd init $valik --chain-id torii-1
+HOMEDIR=~/.archway
+archwayd init $valik --chain-id torii-1 --home $HOMEDIR
 wget https://raw.githubusercontent.com/archway-network/testnets/main/torii-1/penultimate_genesis.json
 cp penultimate_genesis.json ~/.archway/config/genesis.json
-archwayd keys add usr
+archwayd keys add usr --home $HOMEDIR
 archwayd add-genesis-account $(archwayd keys show usr -a)  1001000utorii --home $HOMEDIR
 archwayd gentx usr 1000000utorii \
   --commission-rate 0.1 \
